@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recordatorio Diario</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { background: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+    .card { background: #1e1e1e; padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    h1 { font-size: 1.5rem; margin-top: 0; text-align: center; color: #4ade80; }
+    label { display: block; margin-top: 14px; font-size: 0.9rem; color: #cccccc; }
+    input[type="text"], input[type="email"] { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 1rem; }
+    .aviso-box { background: #262626; border-left: 4px solid #facc15; padding: 12px; margin-top: 18px; border-radius: 6px; font-size: 0.82rem; line-height: 1.4; color: #e5e5e5; }
+    .checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; font-size: 0.85rem; }
+    .checkbox-row input { margin-top: 3px; transform: scale(1.2); }
+    button { width: 100%; padding: 14px; margin-top: 20px; background: #4ade80; color: #000; font-weight: bold; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    #estado { text-align: center; margin-top: 14px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>No Te Drogues</h1>
+    <form id="registroForm">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" required placeholder="Tu nombre">
+
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" required placeholder="Tus apellidos">
+
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" required placeholder="tucorreo@ejemplo.com">
+
+      <div class="aviso-box">
+        <strong>Aviso de recopilación de datos:</strong> Al registrarte, esta aplicación recopilará y almacenará tu <strong>nombre, apellidos y dirección de correo electrónico</strong> con la única finalidad de enviarte un recordatorio diario por email y notificación con el mensaje "No te drogues".
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="consentimiento" required>
+        <label for="consentimiento" style="margin-top:0;">Acepto expresamente el envío de mis datos personales (nombre, apellidos y correo) y la política de privacidad.</label>
+      </div>
+
+      <button type="submit" id="btnEnviar">Activar recordatorio diario</button>
+      <div id="estado"></div>
+    </form>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "TU_URL_DE_APPS_SCRIPT";
+
+    // Solicitar permiso de notificación en el dispositivo y lanzar recordatorio
+    async function activarNotificacionLocal() {
+      if ("Notification" in window) {
+        const permiso = await Notification.requestPermission();
+        if (permiso === "granted") {
+          new Notification("Recordatorio diario", {
+            body: "No te drogues.",
+          });
+        }
+      }
+    }
+
+    document.getElementById("registroForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnEnviar");
+      const estado = document.getElementById("estado");
+      btn.disabled = true;
+      estado.textContent = "Guardando datos y activando...";
+
+      const datos = {
+        nombre: document.getElementById("nombre").value.trim(),
+        apellidos: document.getElementById("apellidos").value.trim(),
+        email: document.getElementById("email").value.trim()
+      };
+
+      try {
+        await activarNotificacionLocal();
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
+        estado.style.color = "#4ade80";
+        estado.textContent = "¡Activado! Recibirás tu notificación y correo todos los días.";
+        document.getElementById("registroForm").reset();
+      } catch (err) {
+        estado.style.color = "#f87171";
+        estado.textContent = "Error al conectar con el servidor.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
