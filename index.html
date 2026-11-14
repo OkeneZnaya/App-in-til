@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recordatorio Diario</title>
+  <meta name="theme-color" content="#121212">
+  <title>No Te Drogues</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://placehold.co/512x512/121212/4ade80.png?text=NTD">
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { background: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
@@ -17,6 +20,8 @@
     button { width: 100%; padding: 14px; margin-top: 20px; background: #4ade80; color: #000; font-weight: bold; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; }
     button:disabled { background: #555; cursor: not-allowed; }
     #estado { text-align: center; margin-top: 14px; font-size: 0.9rem; }
+    .footer-link { text-align: center; margin-top: 16px; font-size: 0.8rem; }
+    .footer-link a { color: #4ade80; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -38,25 +43,29 @@
 
       <div class="checkbox-row">
         <input type="checkbox" id="consentimiento" required>
-        <label for="consentimiento" style="margin-top:0;">Acepto expresamente el envío de mis datos personales (nombre, apellidos y correo) y la política de privacidad.</label>
+        <label for="consentimiento" style="margin-top:0;">Acepto expresamente el envío de mis datos personales (nombre, apellidos y correo) y la <a href="privacidad.html" style="color:#4ade80;">Política de Privacidad</a>.</label>
       </div>
 
       <button type="submit" id="btnEnviar">Activar recordatorio diario</button>
       <div id="estado"></div>
+      <div class="footer-link">
+        <a href="privacidad.html">Consultar Política de Privacidad y Eliminación de Datos</a>
+      </div>
     </form>
   </div>
 
   <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js");
+    }
+
     const SCRIPT_URL = "TU_URL_DE_APPS_SCRIPT";
 
-    // Solicitar permiso de notificación en el dispositivo y lanzar recordatorio
     async function activarNotificacionLocal() {
       if ("Notification" in window) {
         const permiso = await Notification.requestPermission();
         if (permiso === "granted") {
-          new Notification("Recordatorio diario", {
-            body: "No te drogues.",
-          });
+          new Notification("Recordatorio diario", { body: "No te drogues." });
         }
       }
     }
