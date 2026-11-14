@@ -1,0 +1,27 @@
+{
+  "id": "/App-in-til/",
+  "name": "No Te Drogues - Recordatorio Diario",
+  "short_name": "NoTeDrogues",
+  "description": "Aplicación de recordatorio diario por notificación y correo electrónico.",
+  "start_url": "/App-in-til/index.html",
+  "scope": "/App-in-til/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/121212/4ade80.png?text=NTD",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://placehold.co/512x512/121212/4ade80.png?text=NTD",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
